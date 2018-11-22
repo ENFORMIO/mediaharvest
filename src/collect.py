@@ -90,6 +90,9 @@ def browse_categories():
                 #print ('Already loaded within this crawling attempt')
                 continue
             # stay on the site
+            if href is None:
+                continue
+
             if (href.startswith(base_link) or \
                 href.startswith(base_link.replace('http:', 'https:'))):
                 article_urls.append(href)
