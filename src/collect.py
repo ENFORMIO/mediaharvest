@@ -211,7 +211,7 @@ def browse_link(url, depth):
             #print ("   > adding %s " % href)
             links.append(href)
             if (href.startswith('http://') or href.startswith('https://')) \
-                and not href.startswith('http://www.fireworld.at'):
+                and not href.startswith(base_link):
                 external_links.append(href)
                 #print ("     external href: %s" % href)
                 continue
