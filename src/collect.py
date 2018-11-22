@@ -10,10 +10,13 @@ from sqlalchemy.sql import exists
 from sqlalchemy.sql.expression import func
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_declarative import ArticleCategory, Base, ArticleCategoryRelationship, RawDataUrl, RawDataArticle
- 
+
 import zip
 
-base_link = "http://www.krone.at"
+if len(sys.argv) < 2:
+    print ("usage: python3 %s <site-url>" % sys.argv[0])
+    exit(0)
+base_link = sys.argv[1]
 
 engine = create_engine('sqlite:///../data/datacollection.db')
 Base.metadata.bind = engine
@@ -29,8 +32,10 @@ external_links = []
 max_depth = 8
 
 def loadSoupFromUrl(url, use_cache_if_available):
+    raw_data_url_cached = True
     raw_data_url = session.query(RawDataUrl).filter(RawDataUrl.url == url).first()
     if raw_data_url is None:
+        raw_data_url_cached = False
         raw_data_url = RawDataUrl(id = RawDataUrl.getMaxId(session) + 1,
                                   url = url)
         session.add(raw_data_url)
@@ -49,7 +54,7 @@ def loadSoupFromUrl(url, use_cache_if_available):
 
     if latestDownloadTimestamp is None or \
        latestDownloadTimestamp + timedelta(hours=minIntervalOfArticleReload) < datetime.utcnow():
-        print ('downloading...')
+        print('downloading %s content from %s...' % ("cached" if raw_data_url_cached else 'new', url))
         soup = BeautifulSoup(f.read(), 'html.parser')
         zipped = zip.zipped(str(soup), 'article.html')
         raw_data_article = RawDataArticle(id = RawDataArticle.getMaxId(session) + 1,
@@ -58,15 +63,18 @@ def loadSoupFromUrl(url, use_cache_if_available):
         session.add(raw_data_article)
         session.commit()
     elif use_cache_if_available:
-        print ('latestDownloadTimestamp within reload duration: %s' % latestDownloadTimestamp)
+        print ('use cached content (%s) of : %s' % (latestDownloadTimestamp, url))
         soup = BeautifulSoup(latestDownloadedArticle.content, 'html.parser')
 
     return soup
 
 
 def browse_categories():
+    global base_link
     for category in session.query(ArticleCategory).all():
-        print ("crawling category: %s" % category.name)
+        print ("-----------------------------------------------------------")
+        print ("harvesting category: %s" % category.name)
+        print ("-----------------------------------------------------------")
         soup = loadSoupFromUrl(category.url, False)
 
         if soup is None:
@@ -79,16 +87,15 @@ def browse_categories():
 
             href = link.get('href')
             if href in article_urls:
-                print ('Already loaded within this crawling attempt')
+                #print ('Already loaded within this crawling attempt')
                 continue
-            hrefNo = href.replace('https://www.krone.at/', '')
-            if hrefNo.isdigit():
+            # stay on the site
+            if (href.startswith(base_link) or \
+                href.startswith(base_link.replace('http:', 'https:'))):
                 article_urls.append(href)
                 # found an article
-                print(hrefNo)
-                articleSoup = loadSoupFromUrl(href, True)
-                if articleSoup is None:
-                    continue
+                #print(hrefNo)
+                articleSoup = loadSoupFromUrl(href, False)
 
 
 def find_categories(url):
