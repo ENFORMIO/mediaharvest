@@ -75,7 +75,7 @@ def browse_categories():
         print ("-----------------------------------------------------------")
         print ("harvesting category: %s" % category.name)
         print ("-----------------------------------------------------------")
-        soup = loadSoupFromUrl(category.url, False)
+        soup = loadSoupFromUrl(category.url, True)
 
         if soup is None:
             continue
