@@ -103,6 +103,10 @@ def browse_categories():
 
 
 def find_categories(url):
+    print ("-----------------------------------------------------------")
+    print ("harvesting categories")
+    print ("-----------------------------------------------------------")
+
     f = None
     try:
         f=urllib.request.urlopen(url)
@@ -124,34 +128,29 @@ def find_categories(url):
         mainnaviname = mainnavilink.getText().strip()
         mainnaviurl = mainnavilink.get('href')
 
-        print ("found %s =[%s]=> %s" % (mainnavilink.getText().strip(),
+        print ("%s =[%s]=> %s" % (mainnavilink.getText().strip(),
                                   ressort_id,
                                   mainnavilink.get('href')))
 
         stmt = exists().where(ArticleCategory.url == mainnaviurl)
         mainCategory = session.query(ArticleCategory).filter(stmt).first()
         if mainCategory is None:
-            print ("inserting %s" % mainnaviurl)
             mainCategory = ArticleCategory(id = ArticleCategory.getMaxId(session) + 1,
                                                name = mainnaviname,
                                                media_id = ressort_id,
                                                url = mainnaviurl)
             session.add(mainCategory)
             session.commit()
-        else:
-            print ("already recorded")
 
         for sub in mainnavi.select('> div.c_sub > div.c_navi-link > div.c_inner'):
             sub_ressort_id = sub.get('data-ressort_id')
             if (sub_ressort_id == ressort_id):
                 continue
-            #print (sub_ressort_id)
             sub_href = sub.select_one('a').get('href')
             sub_text = sub.select_one('a').getText().strip()
 
             subCategory = session.query(ArticleCategory).filter(ArticleCategory.url == sub_href).first()
             if subCategory is None:
-                print ("inserting %s" % sub_href)
                 subCategory = ArticleCategory(id = ArticleCategory.getMaxId(session) + 1,
                                               name = sub_text,
                                               media_id = sub_ressort_id,
@@ -167,15 +166,12 @@ def find_categories(url):
                                             ArticleCategoryRelationship.type == 'parent_of'
                                            ).first()
             if parentRelation is None:
-                print ('inserting relationship')
                 parentRelation = ArticleCategoryRelationship(id = ArticleCategoryRelationship.getMaxId(session) + 1,
                                                              cat_from = mainCategory,
                                                              cat_to = subCategory,
                                                              type = 'parent_of')
                 session.add(parentRelation)
                 session.commit()
-            else:
-                print ('relationship already there')
 
 def browse_link(url, depth):
 
@@ -235,5 +231,5 @@ def browse_link(url, depth):
 
 
 
-find_categories("http://www.krone.at")
+find_categories(base_link)
 browse_categories()
