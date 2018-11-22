@@ -31,10 +31,11 @@ news_links = []
 external_links = []
 max_depth = 8
 
-def loadSoupFromUrl(url, use_cache_if_available):
+def loadSoupFromUrl(url, mode):
     raw_data_url_cached = True
     raw_data_url = session.query(RawDataUrl).filter(RawDataUrl.url == url).first()
-    if raw_data_url is None:
+    if raw_data_url is None or \
+       mode == 'LOAD_ALWAYS':
         raw_data_url_cached = False
         raw_data_url = RawDataUrl(id = RawDataUrl.getMaxId(session) + 1,
                                   url = url)
@@ -62,7 +63,7 @@ def loadSoupFromUrl(url, use_cache_if_available):
                                           rawDataUrl = raw_data_url)
         session.add(raw_data_article)
         session.commit()
-    elif use_cache_if_available:
+    elif mode == 'USE_CACHED_CONTENT':
         print ('use cached content (%s) of : %s' % (latestDownloadTimestamp, url))
         soup = BeautifulSoup(latestDownloadedArticle.content, 'html.parser')
 
@@ -75,7 +76,7 @@ def browse_categories():
         print ("-----------------------------------------------------------")
         print ("harvesting category: %s" % category.name)
         print ("-----------------------------------------------------------")
-        soup = loadSoupFromUrl(category.url, True)
+        soup = loadSoupFromUrl(category.url, 'LOAD_ALWAYS')
 
         if soup is None:
             continue
@@ -98,7 +99,7 @@ def browse_categories():
                 article_urls.append(href)
                 # found an article
                 #print(hrefNo)
-                articleSoup = loadSoupFromUrl(href, False)
+                articleSoup = loadSoupFromUrl(href, 'NONE')
 
 
 def find_categories(url):
