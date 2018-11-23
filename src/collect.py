@@ -99,8 +99,10 @@ def browse_categories():
                 article_urls.append(href)
                 # found an article
                 #print(hrefNo)
-                articleSoup = loadSoupFromUrl(href, 'NONE')
-
+                try:
+                    articleSoup = loadSoupFromUrl(href, 'NONE')
+                except:
+                    print ("error loading %s " % href)
 
 def find_categories(url):
     print ("-----------------------------------------------------------")
