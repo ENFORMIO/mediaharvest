@@ -2,7 +2,7 @@ import zipfile
 import io
 
 def unzipped(input_zip):
-    input_zip = zipfile.ZipFile(input_zip)
+    input_zip = zipfile.ZipFile(io.BytesIO(input_zip))
     return {name: input_zip.read(name) for name in input_zip.namelist()}
 
 def zipped(input_clear, filename):
