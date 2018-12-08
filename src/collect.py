@@ -16,6 +16,7 @@ except ImportError:
 dataPath = '../data'
 databaseName = 'datacollection.db'
 base_url = None
+urls_file =
 
 argcnt = 0
 while argcnt < len(sys.argv):
@@ -29,16 +30,20 @@ while argcnt < len(sys.argv):
     if arg == '--baseUrl':
         argcnt += 1
         base_url = sys.argv[argcnt] if argcnt < len(sys.argv) else None
+    if arg == '--urls_file':
+        argcnt +=
+        urls_file = sys.argv[argcnt] if argcnt < len(sys.argv) else None
     argcnt += 1
 
 if (dataPath is None or \
     databaseName is None or \
-    base_url is None):
+    (base_url is None and urls_file is None)):
     print ("%s --dataPath <dataPath> --databaseName <databaseName> --baseUrl <base_url>" % sys.argv[0])
     print ("-----------------------------------------------------------------------------------------------------")
     print ("dataPath         Path where the database resides (default: ../data)")
     print ("databaseName     Filename of the sqlite database where the data is collected to (default: ../datacolletion.db)")
     print ("baseUrl          URL where to start crawling (mandator)")
+    print ("urls_file        Filename of a file which holds urls to be loaded")
     exit
 
 print ("%s --dataPath %s --databaseName %s --baseUrl %s" % (sys.argv[0], dataPath, databaseName, base_url))
@@ -111,10 +116,17 @@ def iterative_loader():
     print ("%s identified Urls, %s loaded urls" % (len(identifiedUrls), len(loadedUrls)))
     print ("----------------------------------------------------")
 
-#base_url = 'https://www.krone.at'
-#base_url = 'https://www.heute.at'
 loadedUrls = []
 identifiedUrls = [base_url]
+
+if urls_file is not None:
+    with open(urls_file, 'r') as f:
+        line = f.readline()
+        while line:
+            identifiedUrls.append(line)
+
+if base_url is not None:
+    identifiedUrls.append(base_url)
 
 iterative_loader()
 while (len(identifiedUrls) > 0):
