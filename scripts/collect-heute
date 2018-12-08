@@ -1,0 +1,7 @@
+#!/bin/bash
+cd /home/deploy/apps/enformio/mediaharvest/src
+source ../venv/bin/activate
+DATE=`date +%Y-%m-%d`
+date >> /home/deploy/tmp/collect-heute.log
+pwd >> /home/deploy/tmp/collect-heute.log
+python collect.py --databaseName = $DATE-heute.db --baseUrl https://www.heute.at >> /home/deploy/tmp/collect-heute.log 2>&1

@@ -1,6 +1,7 @@
 #!/bin/bash
-cd ..
-source venv/bin/activate
-cd src
+cd /home/deploy/apps/enformio/mediaharvest/src
+source ../venv/bin/activate
 DATE=`date +%Y-%m-%d`
-python collect.py --databaseName = $DATE-enformio.db --baseUrl https://www.enformio.at
+date >> /home/deploy/tmp/collect-enformio.log
+pwd >> /home/deploy/tmp/collect-enformio.log
+python collect.py --databaseName = $DATE-enformio.db --baseUrl https://www.enformio.at >> /home/deploy/tmp/collect-enformio.log 2>&1
