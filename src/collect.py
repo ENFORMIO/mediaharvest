@@ -16,7 +16,7 @@ except ImportError:
 dataPath = '../data'
 databaseName = 'datacollection.db'
 base_url = None
-urls_file =
+urls_file = None
 
 argcnt = 0
 while argcnt < len(sys.argv):
@@ -99,18 +99,19 @@ def chunks(l, n):
     n = max(1, n)
     return (l[i:i+n] for i in xrange(0, len(l), n))
 
-def iterative_loader():
+def iterative_loader(follow_hrefs):
     global loadedUrls, identifiedUrls, base_url
     urls = identifiedUrls[:100]
     identifiedUrls = identifiedUrls[100:]
     rs = [grequests.get(url) for url in urls]
     responses = grequests.map(rs, size=100)
     loadedUrls = list(sum([loadedUrls, urls], []))
-    url_lists = [get_urls_from_response(response) for response in responses]
-    responded_urls = list(set(sum(url_lists, [])))
-    responded_urls = [url for url in responded_urls if url is not None and url.startswith(base_url)]
-    responded_urls = [url for url in responded_urls if not url in loadedUrls]
-    identifiedUrls = list(sum([identifiedUrls, responded_urls],[]))
+    if follow_hrefs:
+        url_lists = [get_urls_from_response(response) for response in responses]
+        responded_urls = list(set(sum(url_lists, [])))
+        responded_urls = [url for url in responded_urls if url is not None and url.startswith(base_url)]
+        responded_urls = [url for url in responded_urls if not url in loadedUrls]
+        identifiedUrls = list(sum([identifiedUrls, responded_urls],[]))
 
     print ("----------------------------------------------------")
     print ("%s identified Urls, %s loaded urls" % (len(identifiedUrls), len(loadedUrls)))
@@ -127,6 +128,8 @@ if urls_file is not None:
 
 if base_url is not None:
     identifiedUrls.append(base_url)
+
+follow_hrefs = (urls_file is None)
 
 iterative_loader()
 while (len(identifiedUrls) > 0):
