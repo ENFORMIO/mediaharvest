@@ -3,7 +3,7 @@ import grequests
 from bs4 import BeautifulSoup
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy_declarative import Base, RawDataUrl, RawDataArticle
+from sqlite_decl import Base, RawDataUrl, RawDataArticle
 import zip
 import os
 
