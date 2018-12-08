@@ -11,10 +11,23 @@ from sqlalchemy.sql.expression import func, desc
 
 Base = declarative_base()
 
+class MediaSite(Base):
+    __tablename__ = 'media_site'
+    id = Column(BigInteger, primary_key=True)
+    name = Column(String(250), nullable=False)
+
+    @staticmethod
+    def getMaxId(session):
+        maxId = session.query(func.max(MediaSite.id)).scalar()
+        return maxId if not maxId is None else 1
+
+
 class RawDataUrl(Base):
     __tablename__ = 'raw_data_url'
     id = Column(BigInteger, primary_key=True)
     url = Column(String(250), nullable=False)
+    media_site_id = Column(BigInteger, ForeignKey('media_site.id'))
+    mediaSite = relationship(MediaSite)
 
     @staticmethod
     def getMaxId(session):
