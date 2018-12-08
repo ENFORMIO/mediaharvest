@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlite_decl import Base, RawDataUrl, RawDataArticle
 import zip
 import os
+import sys
 
 try:
     from urllib.parse import urljoin
@@ -13,7 +14,37 @@ except ImportError:
      from urlparse import urljoin
 
 dataPath = '../data'
-databasePath = '%s/datacollection.db' % (dataPath)
+databaseName = 'datacollection.db'
+base_url = None
+
+argcnt = 0
+while argcnt < len(sys.argv):
+    arg = sys.argv[argcnt]
+    if arg == '--dataPath':
+        argcnt += 1
+        dataPath = sys.argv[argcnt] if argcnt < len(sys.argv) else None
+    if arg == '--databaseName':
+        argcnt += 1
+        databaseName = sys.argv[argcnt] if argcnt < len(sys.argv) else None
+    if arg == '--baseUrl':
+        argcnt += 1
+        base_url = sys.argv[argcnt] if argcnt < len(sys.argv) else None
+    argcnt += 1
+
+if (dataPath is None or \
+    databaseName is None or \
+    base_url is None):
+    print ("%s --dataPath <dataPath> --databaseName <databaseName> --baseUrl <base_url>" % sys.argv[0])
+    print ("-----------------------------------------------------------------------------------------------------")
+    print ("dataPath         Path where the database resides (default: ../data)")
+    print ("databaseName     Filename of the sqlite database where the data is collected to (default: ../datacolletion.db)")
+    print ("baseUrl          URL where to start crawling (mandator)")
+    exit
+
+print ("%s --dataPath %s --databaseName %s --baseUrl %s" % (sys.argv[0], dataPath, databaseName, base_url))
+print ("-----------------------------------------------------------------------------------------------------")
+
+databasePath = '%s/datacollection.db' % (dataPath, databaseName)
 engine = create_engine('sqlite:///%s' % databasePath)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
@@ -76,8 +107,8 @@ def iterative_loader():
     print ("%s identified Urls, %s loaded urls" % (len(identifiedUrls), len(loadedUrls)))
     print ("----------------------------------------------------")
 
-base_url = 'https://www.krone.at'
-base_url = 'https://www.heute.at'
+#base_url = 'https://www.krone.at'
+#base_url = 'https://www.heute.at'
 loadedUrls = []
 identifiedUrls = [base_url]
 
