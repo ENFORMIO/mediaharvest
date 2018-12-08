@@ -3,7 +3,7 @@ import grequests
 from bs4 import BeautifulSoup
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlite_decl import Base, RawDataUrl, RawDataArticle
+from sqlalchemy_declarative import Base, RawDataUrl, RawDataArticle
 import zip
 import os
 
@@ -52,6 +52,24 @@ def chunks(l, n):
     n = max(1, n)
     return (l[i:i+n] for i in xrange(0, len(l), n))
 
+def recursive_urls(urls):
+    """
+    Given a list of starting urls, recursively finds all descendant urls
+    recursively
+    """
+    global base_url
+    if len(urls) == 0:
+        return
+    print (urls)
+    rs = [grequests.get(url) for url in urls]
+    responses = grequests.map(rs, size=100)
+    url_lists = [get_urls_from_response(response) for response in responses]
+    urls = sum(url_lists, [])  # flatten list of lists into a list
+    urls = [url for url in urls if url is not None and url.startswith(base_url)]
+    urls = list(set(urls)) # remove double entries
+    for chunked_urls in chunks(urls, 100):
+    	recursive_urls(chunked_urls)
+
 def iterative_loader():
     global loadedUrls, identifiedUrls, base_url
     urls = identifiedUrls[:100]
@@ -76,3 +94,5 @@ identifiedUrls = [base_url]
 iterative_loader()
 while (len(identifiedUrls) > 0):
     iterative_loader()
+
+#recursive_urls([base_url])

@@ -1,4 +1,4 @@
-from sqlalchemy_declarative import Base, RawDataUrl, RawDataArticle, ArticleCategory
+from sqlite_decl import Base, RawDataUrl, RawDataArticle, ArticleCategory
 from sqlalchemy import create_engine
 
 import zip

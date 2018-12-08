@@ -1,4 +1,4 @@
-import sqlalchemy_declarative as decl
+import sqlite_decl as decl
 
 class RawDataUrl:
     def __init__(self, session, url):
