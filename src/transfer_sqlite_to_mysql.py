@@ -1,7 +1,8 @@
 import mysql_decl
 import sqlite_decl
 import sqlalchemy
-from sqlite_decl import Base, RawDataUrl, RawDataArticle
+import sqlite_decl
+#from sqlite_decl import Base, RawDataUrl, RawDataArticle
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -68,10 +69,16 @@ def ensure_dir(file_path):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-sqlite_engine = create_engine('sqlite:///%s/%s' % (dataPath, sqliteDbName))
+sourceEngine = 'sqlite:///%s/%s' % (dataPath, sqliteDbName)
+print ("source engine:         %s " % sourceEngine)
+sqlite_engine = create_engine(sourceEngine)
 sqlite_decl.Base.metadata.bind = sqlite_engine
 SqliteSession = sessionmaker(bind=sqlite_engine)
 sqlite = SqliteSession()
+
+for sqlite_url in sqlite.query(RawDataUrl).all():
+    print(sqlite_url)
+
 
 mysql_engine = create_engine('mysql+pymysql://%s:%s@%s/%s' % (mysqlUserName, mysqlPassword, mysqlHost, mysqlDbName))
 mysql_decl.Base.metadata.bind = mysql_engine
@@ -85,14 +92,14 @@ if media_site is None:
     mysql.add(media_site)
     mysql.commit()
 
-for url in sqlite.query(sqlite_decl.RawDataUrl).all():
-    print(url)
-    raw_data_url = decl.RawDataUrl()
-    raw_data_url.mediaSite = media_site
-    raw_data_url.url = url.url
-    raw_data_url.id = url.id
-    mysql.add(raw_data_url)
-    mysql.commit()
+for sqlite_url in sqlite.query(sqlite_decl.RawDataUrl).all():
+    print(sqlite_url)
+    #raw_data_url = mysql_decl.RawDataUrl()
+    #raw_data_url.mediaSite = media_site
+    #raw_data_url.url = url.url
+    #raw_data_url.id = url.id
+    #mysql.add(raw_data_url)
+    #mysql.commit()
 
 """
 
