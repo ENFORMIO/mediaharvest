@@ -6,8 +6,11 @@ from sqlalchemy.orm import sessionmaker
 from sqlite_decl import Base, RawDataUrl, RawDataArticle
 import zip
 import os
-import urllib
-import urllib.parse
+
+try:
+    from urllib.parse import urljoin
+except ImportError:
+     from urlparse import urljoin
 
 dataPath = '../data'
 databasePath = '%s/datacollection.db' % (dataPath)
@@ -37,7 +40,7 @@ def get_urls_from_response(r):
     store_url(r.url, str(soup))
     hrefs = [link.get('href') for link in soup.find_all('a')]
     # join host and path from r.url with found a href
-    hrefs = [urllib.parse.urljoin(r.url, href) for href in hrefs]
+    hrefs = [urlparse.urljoin(r.url, href) for href in hrefs]
     soup.decompose()
     return hrefs
 

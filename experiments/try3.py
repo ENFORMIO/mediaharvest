@@ -1,13 +1,11 @@
-import urllib
-import urllib.parse
-
+try:
+    from urllib.parse import urljoin
+except ImportError:
+     from urlparse import urljoin
 
 href = "/sport/eishockey/"
 base_url = "https://www.heute.at"
 
-
-parsedBaseUrl = urllib.parse.urlparse(base_url)
-joinedUrl = urllib.parse.urljoin(base_url, href)
-parsedJoinedUrl = urllib.parse.urlparse(joinedUrl)
+joinedUrl = urljoin(base_url, href)
 
 print (joinedUrl)
