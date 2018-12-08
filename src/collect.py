@@ -61,7 +61,7 @@ session = DBSession()
 
 def store_url(url, content):
     global session
-    raw_data_url = session.query(RawDataUrl).filter(RawDataUrl.url == url).first
+    raw_data_url = session.query(RawDataUrl).filter(RawDataUrl.url == url).first()
     if raw_data_url is None:
         raw_data_url = RawDataUrl(id = RawDataUrl.getMaxId(session) + 1, url=url)
         session.add(raw_data_url)
