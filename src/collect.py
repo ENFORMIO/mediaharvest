@@ -40,7 +40,7 @@ def get_urls_from_response(r):
     store_url(r.url, str(soup))
     hrefs = [link.get('href') for link in soup.find_all('a')]
     # join host and path from r.url with found a href
-    hrefs = [urlparse.urljoin(r.url, href) for href in hrefs]
+    hrefs = [urljoin(r.url, href) for href in hrefs]
     soup.decompose()
     return hrefs
 
