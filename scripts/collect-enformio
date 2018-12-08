@@ -4,4 +4,4 @@ source ../venv/bin/activate
 DATE=`date +%Y-%m-%d`
 date >> /home/deploy/tmp/collect-enformio.log
 pwd >> /home/deploy/tmp/collect-enformio.log
-python collect.py --databaseName = $DATE-enformio.db --baseUrl https://www.enformio.at >> /home/deploy/tmp/collect-enformio.log 2>&1
+python collect.py --databaseName $DATE-enformio.db --baseUrl https://www.enformio.at >> /home/deploy/tmp/collect-enformio.log 2>&1

@@ -4,4 +4,4 @@ source ../venv/bin/activate
 DATE=`date +%Y-%m-%d`
 date >> /home/deploy/tmp/collect-krone.log
 pwd >> /home/deploy/tmp/collect-krone.log
-python collect.py --databaseName = $DATE-krone.db --baseUrl https://www.krone.at >> /home/deploy/tmp/collect-krone.log 2>&1
+python collect.py --databaseName $DATE-krone.db --baseUrl https://www.krone.at >> /home/deploy/tmp/collect-krone.log 2>&1
