@@ -31,7 +31,7 @@ while argcnt < len(sys.argv):
         argcnt += 1
         base_url = sys.argv[argcnt] if argcnt < len(sys.argv) else None
     if arg == '--urls_file':
-        argcnt +=
+        argcnt += 1
         urls_file = sys.argv[argcnt] if argcnt < len(sys.argv) else None
     argcnt += 1
 
