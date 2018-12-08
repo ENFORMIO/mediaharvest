@@ -32,3 +32,8 @@ for sitemap in sitemaps:
             if 'loc' in loc.tag:
                 #print (loc.text)
                 urls.append(loc.text)
+
+f = open('../../data/krone-sitemap-urls.txt', 'w')
+for url in urls:
+    f.writeline(url)
+f.close()
