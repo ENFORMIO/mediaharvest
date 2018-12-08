@@ -6,6 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlite_decl import Base, RawDataUrl, RawDataArticle
 import zip
 import os
+import urllib
+import urllib.parse
 
 dataPath = '../data'
 databasePath = '%s/datacollection.db' % (dataPath)
