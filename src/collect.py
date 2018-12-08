@@ -46,6 +46,10 @@ print ("------------------------------------------------------------------------
 
 databasePath = '%s/%s' % (dataPath, databaseName)
 engine = create_engine('sqlite:///%s' % databasePath)
+
+if not os.path.isfile(databasePath):
+    Base.metadata.create_all(engine)
+
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
