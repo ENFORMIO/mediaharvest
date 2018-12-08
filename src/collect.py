@@ -118,13 +118,12 @@ def iterative_loader(follow_hrefs):
     print ("----------------------------------------------------")
 
 loadedUrls = []
-identifiedUrls = [base_url]
+identifiedUrls = []
 
 if urls_file is not None:
     with open(urls_file, 'r') as f:
         line = f.readline()
         while line:
-            identifiedUrls.append(line)
 
 if base_url is not None:
     identifiedUrls.append(base_url)
