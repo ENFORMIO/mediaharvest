@@ -77,6 +77,7 @@ def iterative_loader():
     print ("----------------------------------------------------")
 
 base_url = 'https://www.krone.at'
+base_url = 'https://www.heute.at'
 loadedUrls = []
 identifiedUrls = [base_url]
 
