@@ -33,9 +33,11 @@ def get_urls_from_response(r):
     print(r.url)
     soup = BeautifulSoup(r.text, 'html.parser')
     store_url(r.url, str(soup))
-    urls = [link.get('href') for link in soup.find_all('a')]
+    hrefs = [link.get('href') for link in soup.find_all('a')]
+    # join host and path from r.url with found a href
+    hrefs = [urllib.parse.urljoin(r.url, href) for href in hrefs]
     soup.decompose()
-    return urls
+    return hrefs
 
 
 def print_url(args):
