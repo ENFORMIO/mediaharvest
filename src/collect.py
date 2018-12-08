@@ -124,6 +124,8 @@ if urls_file is not None:
     with open(urls_file, 'r') as f:
         line = f.readline()
         while line:
+            identifiedUrls.append(line)
+            line = f.readline()
 
 if base_url is not None:
     identifiedUrls.append(base_url)
