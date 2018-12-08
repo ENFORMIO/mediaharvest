@@ -63,6 +63,7 @@ def store_url(url, content):
     global session
     raw_data_url = session.query(RawDataUrl).filter(RawDataUrl.url == url).first()
     if raw_data_url is None:
+        print ("adding url to raw_data_url: %s" % url)
         raw_data_url = RawDataUrl(id = RawDataUrl.getMaxId(session) + 1, url=url)
         session.add(raw_data_url)
         session.commit()
