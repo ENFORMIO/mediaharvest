@@ -44,7 +44,7 @@ if (dataPath is None or \
 print ("%s --dataPath %s --databaseName %s --baseUrl %s" % (sys.argv[0], dataPath, databaseName, base_url))
 print ("-----------------------------------------------------------------------------------------------------")
 
-databasePath = '%s/datacollection.db' % (dataPath, databaseName)
+databasePath = '%s/%s' % (dataPath, databaseName)
 engine = create_engine('sqlite:///%s' % databasePath)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
