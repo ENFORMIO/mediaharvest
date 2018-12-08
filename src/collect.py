@@ -61,15 +61,19 @@ session = DBSession()
 
 def store_url(url, content):
     global session
+    print("attempt to find url: %s" % url)
     raw_data_url = session.query(RawDataUrl).filter(RawDataUrl.url == url).first()
     if raw_data_url is None:
         print ("adding url to raw_data_url: %s" % url)
         raw_data_url = RawDataUrl(id = RawDataUrl.getMaxId(session) + 1, url=url)
         session.add(raw_data_url)
         session.commit()
+        print ("added url to raw_data_url: %s" % url)
+
+    print ("raw_data_url %s" % str(raw_data_url))
 
     zipped = zip.zipped(content, 'article.html')
-    raw_data_article = RawDataArticle(id = RawDataArticle.getMaxId(session) + 1, content = zipped, rawDataUrl = None)
+    raw_data_article = RawDataArticle(id = RawDataArticle.getMaxId(session) + 1, content = zipped, rawDataUrl = raw_data_url)
     session.add(raw_data_article)
     session.commit()
 
