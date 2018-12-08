@@ -1,0 +1,6 @@
+#!/bin/bash
+cd ..
+source venv/bin/activate
+cd src
+DATE=`date +%Y-%m-%d`
+python collect.py --databaseName = $DATE-enformio.db --baseUrl https://www.enformio.at

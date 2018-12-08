@@ -63,5 +63,6 @@ class ArticleCategoryRelationship(Base):
         return maxId if not maxId is None else 1
 
 
+print ("creating engine")
 engine = create_engine('sqlite:///../data/datacollection.db')
 Base.metadata.create_all(engine)
