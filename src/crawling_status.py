@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 import zip
 
 #engine = create_engine('sqlite:///../data/datacollection.db')
-engine = create_engine('sqlite:///../data/2018-12-08-enformio.db')
+engine = create_engine('sqlite:///../data/2018-12-09-enformio.db')
 Base.metadata.bind = engine
 
 from sqlalchemy.orm import sessionmaker

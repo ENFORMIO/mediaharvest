@@ -74,7 +74,7 @@ def store_url(url, content):
 
     zipped = zip.zipped(content, 'article.html')
     raw_data_article = RawDataArticle(id = RawDataArticle.getMaxId(session) + 1, content = zipped, rawDataUrl = raw_data_url)
-    raw_data_url = zipped
+    raw_data_article.content = zipped
     session.add(raw_data_article)
     session.commit()
 
