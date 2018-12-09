@@ -3,6 +3,7 @@ import sys
 import datetime
 from sqlalchemy import Column, ForeignKey, Integer, String, BigInteger, DateTime, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import MetaData
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 
@@ -45,6 +46,23 @@ class RawDataArticle(Base):
     @staticmethod
     def getMaxId(session):
         maxId = session.query(func.max(RawDataArticle.id)).scalar()
+        return maxId if not maxId is None else 1
+
+
+class ArticleExtract(Base):
+    __tablename__ = 'article_extract'
+    extend_existing=True
+    id = Column(BigInteger, primary_key=True)
+    version = Column(Integer, default=0)
+    rawDataUrl_id = Column(BigInteger, ForeignKey('raw_data_url.id'))
+    rawDataUrl = relationship(RawDataUrl)
+    rawDataArticle_id = Column(BigInteger, ForeignKey('raw_data_article.id'))
+    rawDataArticle = relationship(RawDataArticle)
+    title = Column(String(250), nullable=True)
+
+    @staticmethod
+    def getMaxId(session):
+        maxId = session.query(func.max(ArticleExtract.id)).scalar()
         return maxId if not maxId is None else 1
 
 #engine = create_engine('sqlite:///../data/datacollection.db')
