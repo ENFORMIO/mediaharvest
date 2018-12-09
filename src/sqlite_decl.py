@@ -26,7 +26,7 @@ class RawDataArticle(Base):
     id = Column(BigInteger, primary_key=True)
     rawDataUrl_id = Column(BigInteger, ForeignKey('raw_data_url.id'))
     rawDataUrl = relationship(RawDataUrl)
-    content = Column(String, nullable=True)
+    content = Column(Binary, nullable=True)
     downloadTimestamp = Column(DateTime, default=datetime.datetime.utcnow)
 
     @staticmethod
