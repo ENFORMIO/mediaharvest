@@ -2,9 +2,11 @@ import mysql_decl
 import sqlite_decl
 import sqlalchemy
 import sqlite_decl
-#from sqlite_decl import Base, RawDataUrl, RawDataArticle
+from sqlite_decl import Base, RawDataUrl, RawDataArticle
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy import and_
+from datetime import timedelta
 
 import os
 import sys
@@ -76,10 +78,6 @@ sqlite_decl.Base.metadata.bind = sqlite_engine
 SqliteSession = sessionmaker(bind=sqlite_engine)
 sqlite = SqliteSession()
 
-for sqlite_url in sqlite.query(RawDataUrl).all():
-    print(sqlite_url)
-
-
 mysql_engine = create_engine('mysql+pymysql://%s:%s@%s/%s' % (mysqlUserName, mysqlPassword, mysqlHost, mysqlDbName))
 mysql_decl.Base.metadata.bind = mysql_engine
 MysqlSession = sessionmaker(bind=mysql_engine)
@@ -92,30 +90,55 @@ if media_site is None:
     mysql.add(media_site)
     mysql.commit()
 
-for sqlite_url in sqlite.query(sqlite_decl.RawDataUrl).all():
-    print(sqlite_url)
-    #raw_data_url = mysql_decl.RawDataUrl()
-    #raw_data_url.mediaSite = media_site
-    #raw_data_url.url = url.url
-    #raw_data_url.id = url.id
-    #mysql.add(raw_data_url)
-    #mysql.commit()
+urlIdsByUrl = {}
+cntSourceUrls = 0
+cntAddedUrls = 0
+cntSourceArticles = 0
+cntAddedArticles = 0
 
-"""
+for sqlite_url in sqlite.query(sqlite_decl.RawDataUrl).all():
+    cntSourceUrls += 1
+    raw_data_url = mysql.query(mysql_decl.RawDataUrl).filter(and_(mysql_decl.RawDataUrl.url == sqlite_url.url, mysql_decl.RawDataUrl.mediaSite == media_site)).first()
+    if raw_data_url is None:
+        raw_data_url = mysql_decl.RawDataUrl()
+        raw_data_url.mediaSite = media_site
+        raw_data_url.url = sqlite_url.url
+        raw_data_url.id = mysql_decl.RawDataUrl.getMaxId(mysql) + 1
+        mysql.add(raw_data_url)
+        mysql.commit()
+        cntAddedUrls += 1
+    urlIdsByUrl[sqlite_url.url] = raw_data_url.id
+
 
 for article in sqlite.query(sqlite_decl.RawDataArticle).all():
+    cntSourceArticles += 1
+    raw_data_url_id = urlIdsByUrl[article.rawDataUrl.url]
+    filename = '../data/files/%s/%s-%s.zip' % (article.downloadTimestamp.date().isoformat(), media_site.name, article.id)
+
+    raw_data_article = mysql.query(mysql_decl.RawDataArticle)\
+                            .filter(mysql_decl.RawDataArticle.rawDataUrl_id == raw_data_url_id)\
+                            .filter(mysql_decl.RawDataArticle.downloadTimestamp > article.downloadTimestamp + timedelta(seconds=-1))\
+                            .filter(mysql_decl.RawDataArticle.downloadTimestamp <= article.downloadTimestamp + timedelta(seconds=1))\
+                            .first()
+
+    if raw_data_article is None:
+        raw_data_article = mysql_decl.RawDataArticle()
+        raw_data_article.id = mysql_decl.RawDataArticle.getMaxId(mysql) + 1
+        raw_data_article.rawDataUrl_id = raw_data_url_id
+        raw_data_article.downloadTimestamp = article.downloadTimestamp
+        raw_data_article.path = filename
+        mysql.add(raw_data_article)
+        mysql.commit()
+        cntAddedArticles += 1
+
     # store file into filesystem
-    filename = '../data/files/%s/%s.zip' % (article.downloadTimestamp.date().isoformat(), article.id)
     ensure_dir(filename)
     file = open(filename, 'wb')
     file.write(article.content)
     file.close()
-    # store dataset into database
-    raw_data_article = decl.RawDataArticle()
-    raw_data_article.id = article.id
-    raw_data_article.rawDataUrl_id = article.rawDataUrl_id
-    raw_data_article.path = filename
-    raw_data_article.downloadTimestamp = article.downloadTimestamp
-    mysql.add(raw_data_article)
-    mysql.commit()
-"""
+
+print ("source engine:         %s " % sourceEngine)
+print ("source urls:           %s " % cntSourceUrls)
+print ("added urls:            %s " % cntAddedUrls)
+print ("source articles:       %s " % cntSourceArticles)
+print ("added articles:        %s " % cntAddedArticles)
