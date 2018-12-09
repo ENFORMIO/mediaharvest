@@ -19,10 +19,10 @@ print ("%s urls" % len(urls))
 articles = session.query(RawDataArticle).all()
 print ("%s articles" % len(articles))
 
-#for article in articles:
-#    f = open('../data/krone.at/%s.zip' % article.id, 'wb')
-#    f.write(article.content)
-#    f.close()
+for article in articles:
+    f = open('../data/krone.at/%s.zip' % article.id, 'wb')
+    f.write(article.content)
+    f.close()
 
 
 
