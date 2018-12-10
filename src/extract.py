@@ -49,7 +49,7 @@ if (dataPath is None or \
     print ("mysqlUserName    Username to connect with mysql database (default: mediaharvest)")
     print ("mysqlPassword    Password to connect with mysql database")
     print ("mysqlHost        Host to connect to mysql database (default: localhost)")
-    exit
+    exit()
 
 print ("%s --dataPath %s  --mysqlHost %s --mysqlDbName %s --mysqlUserName %s --mysqlPassword %s" % (sys.argv[0], dataPath, mysqlHost, mysqlDbName, mysqlUserName, mysqlPassword))
 print ("-----------------------------------------------------------------------------------------------------")
@@ -74,8 +74,8 @@ print ("rawDataUrl count:     %s" % cntRawDataUrls )
 
 for rawDataUrl in rawDataUrls:
     cntRawDataUrlsProcessed += 1
-    if (cntRawDataUrls % 10 == 0):
-        print ("%3d %%: %s of %s urls processed" % (cntRawDataUrlsProcessed / cntRawDataUrls * 100, cntRawDataUrlsProcessed, cntRawDataUrls))
+    #if (cntRawDataUrls % 10 == 0):
+    print ("%3d %%: %s of %s urls processed" % (cntRawDataUrlsProcessed / cntRawDataUrls * 100, cntRawDataUrlsProcessed, cntRawDataUrls))
 
     title = author = publishedDate = copyrightImage = None
     ogTitle = ogDescription = None
@@ -126,7 +126,8 @@ for rawDataUrl in rawDataUrls:
                                         rawDataUrl = rawDataUrl)
         mysql.add(articleExtract)
 
-    if articleExtract.version >= extractionVersion:
+    if articleExtract.version is not None and \
+       articleExtract.version >= extractionVersion:
         continue
 
     try:

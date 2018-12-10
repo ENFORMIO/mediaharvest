@@ -61,7 +61,7 @@ if (dataPath is None or \
     print ("mysqlPassword    Password to connect with mysql database")
     print ("mysqlHost        Host to connect to mysql database (default: localhost)")
     print ("siteName         Name of the site crawled")
-    exit
+    exit()
 
 print ("%s --dataPath %s --sqliteDbName %s --mysqlDbName %s --mysqlUserName %s --mysqlPassword %s --mysqlHost %s --siteName %s" % (sys.argv[0], dataPath, sqliteDbName, mysqlDbName, mysqlUserName, mysqlPassword, mysqlHost, siteName))
 print ("-----------------------------------------------------------------------------------------------------")
