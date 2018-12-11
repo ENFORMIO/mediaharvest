@@ -113,8 +113,8 @@ def iterative_loader(follow_hrefs):
     responses = grequests.map(rs, size=100)
     for response in responses:
         if not response.ok:
-            print ("%s: (%s - %s)", (response.url, response.status_code, response.reason))
-    
+            print ("%s: (%s - %s)" % (response.url, response.status_code, response.reason))
+
     loadedUrls = list(sum([loadedUrls, urls], []))
     if follow_hrefs:
         url_lists = [get_urls_from_response(response) for response in responses]
