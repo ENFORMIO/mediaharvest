@@ -118,9 +118,9 @@ def iterative_loader2(follow_hrefs):
                 identifiedUrls.remove(url)
                 loadedUrls.append(url)
             if follow_hrefs:
-                url_lists = [get_urls_from_response(response) for response in responses]
-                responded_urls = list(set(sum(url_lists, [])))
-                responded_urls = [url for url in responded_urls if url is not None and url.startswith(base_url)]
+                responded_urls = get_urls_from_response(response)
+                responded_urls = [url for url in responded_urls if url is not None]
+                responded_urls = [url for url in responded_urls if url.startswith(base_url)]
                 responded_urls = [url for url in responded_urls if not url in loadedUrls]
                 identifiedUrls = list(sum([identifiedUrls, responded_urls],[]))
         else:
