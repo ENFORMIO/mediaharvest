@@ -79,7 +79,7 @@ def store_url(url, content):
     session.commit()
 
 def get_urls_from_response(r):
-    if r is None:
+    if r is None or not r.ok:
         return []
     print("loaded %s" % r.url)
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -145,7 +145,6 @@ def iterative_loader(follow_hrefs):
         responded_urls = [url for url in responded_urls if url is not None and url.startswith(base_url)]
         responded_urls = [url for url in responded_urls if not url in loadedUrls]
         identifiedUrls = list(sum([identifiedUrls, responded_urls],[]))
-
     print ("----------------------------------------------------")
     print ("%s identified Urls, %s loaded urls" % (len(identifiedUrls), len(loadedUrls)))
     print ("----------------------------------------------------")
