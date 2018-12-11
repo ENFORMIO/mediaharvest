@@ -81,7 +81,7 @@ def store_url(url, content):
 def get_urls_from_response(r):
     if r is None:
         return []
-    print(r.url)
+    print("loaded %s" % r.url)
     soup = BeautifulSoup(r.text, 'html.parser')
     store_url(r.url, str(soup))
     hrefs = [link.get('href') for link in soup.find_all('a')]
@@ -124,6 +124,7 @@ def iterative_loader2(follow_hrefs):
                 responded_urls = [url for url in responded_urls if not url in loadedUrls]
                 identifiedUrls = list(set(sum([identifiedUrls, responded_urls],[])))
         else:
+            print ("error loading %s" % url)
             identifiedUrls.remove(url)
             identifiedUrls.append(url)
     print ("----------------------------------------------------")
