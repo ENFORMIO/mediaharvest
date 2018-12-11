@@ -110,6 +110,11 @@ def iterative_loader2(follow_hrefs):
     urls = identifiedUrls[:100]
     rs = [grequests.get(url) for url in urls]
     responses = grequests.map(rs, size=100)
+    for i in range(len(urls)):
+        response = responses[i]
+        url = urls[i]
+        print ("%s =?= %s" % (response.url, url))
+        
     for response in responses:
         if response.ok:
             identifiedUrls.remove(response.url)
