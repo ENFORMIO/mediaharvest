@@ -138,10 +138,6 @@ def iterative_loader(follow_hrefs):
     identifiedUrls = identifiedUrls[100:]
     rs = [grequests.get(url) for url in urls]
     responses = grequests.map(rs, size=100)
-    good_responses = [response for response in responses if response.ok]
-    bad_response_urls = [response.url for response in responses if not response.ok]
-    urls = [response.url for response in good_responses]
-    identifiedUrls = list(sum([identifiedUrls, bad_response_urls], []))
     loadedUrls = list(sum([loadedUrls, urls], []))
     if follow_hrefs:
         url_lists = [get_urls_from_response(response) for response in responses]
@@ -169,6 +165,6 @@ if base_url is not None:
 
 follow_hrefs = (urls_file is None)
 
-iterative_loader2(follow_hrefs)
+iterative_loader(follow_hrefs)
 while (len(identifiedUrls) > 0):
-    iterative_loader2(follow_hrefs)
+    iterative_loader(follow_hrefs)
