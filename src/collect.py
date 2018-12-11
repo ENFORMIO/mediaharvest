@@ -158,10 +158,8 @@ def iterative_loader3(follow_hrefs):
     for response in responses:
         url = str(response.url)
         if response.ok:
-            identifiedUrls.remove(url)
             loadedUrls.append(url)
         else:
-            identifiedUrls.remove(url)
             identifiedUrls.append(url)
     #loadedUrls = list(sum([loadedUrls, urls], []))
     if follow_hrefs:
