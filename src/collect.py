@@ -114,11 +114,12 @@ def iterative_loader2(follow_hrefs):
         response = responses[i]
         url = urls[i]
         print ("%s =?= %s" % (response.url, url))
-        
+
     for response in responses:
         if response.ok:
-            identifiedUrls.remove(response.url)
-            loadedUrls.append(response.url)
+            if (response.url in identifiedUrls):
+                identifiedUrls.remove(response.url)
+                loadedUrls.append(response.url)
             if follow_hrefs:
                 url_lists = [get_urls_from_response(response) for response in responses]
                 responded_urls = list(set(sum(url_lists, [])))
