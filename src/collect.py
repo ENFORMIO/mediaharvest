@@ -105,6 +105,29 @@ def chunks(l, n):
     n = max(1, n)
     return (l[i:i+n] for i in xrange(0, len(l), n))
 
+def iterative_loader2(follow_hrefs):
+    global loadedUrls, identifiedUrls, base_url
+    urls = identfiedUrls[:100]
+    rs = [grequests.get(url) for url in urls]
+    responses = grequests.map(rs, size=100)
+    for response in responses:
+        if response.ok:
+            identifiedUrls.remove(response.url)
+            loadedUrls.append(response.url)
+            if follow_hrefs:
+                url_lists = [get_urls_from_response(response) for response in responses]
+                responded_urls = list(set(sum(url_lists, [])))
+                responded_urls = [url for url in responded_urls if url is not None and url.startswith(base_url)]
+                responded_urls = [url for url in responded_urls if not url in loadedUrls]
+                identifiedUrls = list(sum([identifiedUrls, responded_urls],[]))
+        else:
+            identifiedUrls.remove(response.url)
+            identifiedUrls.append(response.url)
+    print ("----------------------------------------------------")
+    print ("%s identified Urls, %s loaded urls" % (len(identifiedUrls), len(loadedUrls)))
+    print ("----------------------------------------------------")
+
+
 def iterative_loader(follow_hrefs):
     global loadedUrls, identifiedUrls, base_url
     urls = identifiedUrls[:100]
@@ -142,6 +165,6 @@ if base_url is not None:
 
 follow_hrefs = (urls_file is None)
 
-iterative_loader(follow_hrefs)
+iterative_loader2(follow_hrefs)
 while (len(identifiedUrls) > 0):
-    iterative_loader(follow_hrefs)
+    iterative_loader2(follow_hrefs)
