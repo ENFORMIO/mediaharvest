@@ -124,7 +124,7 @@ def iterative_loader2(follow_hrefs):
                 responded_urls = [url for url in responded_urls if not url in loadedUrls]
                 identifiedUrls = list(set(sum([identifiedUrls, responded_urls],[])))
         else:
-            print ("error loading %s" % url)
+            print ("[%s] error loading %s" % (response.status_code, url))
             identifiedUrls.remove(url)
             identifiedUrls.append(url)
     print ("----------------------------------------------------")
