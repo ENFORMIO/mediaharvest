@@ -167,7 +167,7 @@ def iterative_loader3(follow_hrefs):
         responded_urls = list(set(sum(url_lists, [])))
         responded_urls = [url for url in responded_urls if url is not None and url.startswith(base_url)]
         responded_urls = [url for url in responded_urls if not url in loadedUrls]
-        identifiedUrls = list(set(sum([identifiedUrls, responded_urls],[])))
+        identifiedUrls = list(set(list(sum([identifiedUrls, responded_urls],[]))))
     print ("----------------------------------------------------")
     print ("%s identified Urls, %s loaded urls" % (len(identifiedUrls), len(loadedUrls)))
     print ("----------------------------------------------------")
