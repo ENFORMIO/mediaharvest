@@ -111,10 +111,13 @@ def iterative_loader(follow_hrefs):
     identifiedUrls = identifiedUrls[100:]
     rs = [grequests.get(url) for url in urls]
     responses = grequests.map(rs, size=100)
-    for response in responses:
-        if not response.ok:
-            print ("%s: (%s - %s) -> reenqueue" % (response.url, response.status_code, response.reason))
-            identifiedUrls.append(response.url)
+    good_responses = [response for response in responses if response.ok]
+    bad_response_urls = [response.url for response in responses if not response.ok]
+    identifiedUrls = list(sum([identifiedUrls, bad_response_urls], []))
+    #for response in responses:
+    #    if not response.ok:
+    #        print ("%s: (%s - %s) -> reenqueue" % (response.url, response.status_code, response.reason))
+    #        #identifiedUrls.append(response.url)
 
     loadedUrls = list(sum([loadedUrls, urls], []))
     if follow_hrefs:
