@@ -107,7 +107,7 @@ def chunks(l, n):
 
 def iterative_loader2(follow_hrefs):
     global loadedUrls, identifiedUrls, base_url
-    urls = identfiedUrls[:100]
+    urls = identifiedUrls[:100]
     rs = [grequests.get(url) for url in urls]
     responses = grequests.map(rs, size=100)
     for response in responses:
