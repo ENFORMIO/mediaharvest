@@ -124,8 +124,8 @@ def iterative_loader2(follow_hrefs):
                 responded_urls = [url for url in responded_urls if not url in loadedUrls]
                 identifiedUrls = list(sum([identifiedUrls, responded_urls],[]))
         else:
-            identifiedUrls.remove(response.url)
-            identifiedUrls.append(response.url)
+            identifiedUrls.remove(url)
+            identifiedUrls.append(url)
     print ("----------------------------------------------------")
     print ("%s identified Urls, %s loaded urls" % (len(identifiedUrls), len(loadedUrls)))
     print ("----------------------------------------------------")
