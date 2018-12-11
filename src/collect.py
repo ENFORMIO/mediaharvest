@@ -187,6 +187,6 @@ if base_url is not None:
 
 follow_hrefs = (urls_file is None)
 
-iterative_loader3(follow_hrefs)
+iterative_loader(follow_hrefs)
 while (len(identifiedUrls) > 0):
-    iterative_loader3(follow_hrefs)
+    iterative_loader(follow_hrefs)
