@@ -6,7 +6,7 @@ from sqlite_decl import Base, RawDataUrl, RawDataArticle
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import and_
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import os
 import sys
