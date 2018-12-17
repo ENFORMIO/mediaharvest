@@ -7,6 +7,7 @@ from sqlite_decl import Base, RawDataUrl, RawDataArticle
 import zip
 import os
 import sys
+import time
 
 try:
     from urllib.parse import urljoin
@@ -17,6 +18,8 @@ dataPath = '../data'
 databaseName = 'datacollection.db'
 base_url = None
 urls_file = None
+parallel_procs = 100
+waiting_secs = 0
 
 argcnt = 0
 while argcnt < len(sys.argv):
@@ -33,6 +36,12 @@ while argcnt < len(sys.argv):
     if arg == '--urls_file':
         argcnt += 1
         urls_file = sys.argv[argcnt] if argcnt < len(sys.argv) else None
+    if arg == '--parallel_procs':
+        argcnt += 1
+        parallel_procs = int(sys.argv[argcnt]) if argcnt < len(sys.argv) else None
+    if arg == '--waiting_secs':
+        argcnt += 1
+        waiting_secs = int(sys.argv[argcnt]) if argcnt < len(sys.argv) else None
     argcnt += 1
 
 if (dataPath is None or \
@@ -44,9 +53,11 @@ if (dataPath is None or \
     print ("databaseName     Filename of the sqlite database where the data is collected to (default: ../datacolletion.db)")
     print ("baseUrl          URL where to start crawling (mandator)")
     print ("urls_file        Filename of a file which holds urls to be loaded")
+    print ("waiting_secs     number of seconds to wait after a bunch of requests (default:0)")
+    print ("parallel_procs   number of threads running get in parallel (default:100)")
     exit
 
-print ("%s --dataPath %s --databaseName %s --baseUrl %s" % (sys.argv[0], dataPath, databaseName, base_url))
+print ("%s --dataPath %s --databaseName %s --baseUrl %s --parallel_procs %s --waiting_secs %s" % (sys.argv[0], dataPath, databaseName, base_url, parallel_procs, waiting_secs))
 print ("-----------------------------------------------------------------------------------------------------")
 
 databasePath = '%s/%s' % (dataPath, databaseName)
@@ -133,11 +144,12 @@ def iterative_loader2(follow_hrefs):
 
 
 def iterative_loader(follow_hrefs):
-    global loadedUrls, identifiedUrls, base_url
-    urls = identifiedUrls[:100]
-    identifiedUrls = identifiedUrls[100:]
+    global loadedUrls, identifiedUrls, base_url, parallel_procs, waiting_secs
+    urls = identifiedUrls[:parallel_procs]
+    identifiedUrls = identifiedUrls[parallel_procs:]
     rs = [grequests.get(url) for url in urls]
-    responses = grequests.map(rs, size=100)
+    responses = grequests.map(rs, size=parallel_procs)
+    time.sleep(waiting_secs)
     loadedUrls = list(sum([loadedUrls, urls], []))
     if follow_hrefs:
         url_lists = [get_urls_from_response(response) for response in responses]
