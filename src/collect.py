@@ -8,6 +8,7 @@ import zip
 import os
 import sys
 import time
+from datetime import datetime
 
 try:
     from urllib.parse import urljoin
@@ -199,6 +200,12 @@ if base_url is not None:
 
 follow_hrefs = (urls_file is None)
 
+starttime = datetime.utcnow()
+
 iterative_loader(follow_hrefs)
 while (len(identifiedUrls) > 0):
     iterative_loader(follow_hrefs)
+
+endtime = datetime.utcnow()
+
+print ("runtime:         %s" % str(endtime - starttime))

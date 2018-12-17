@@ -66,6 +66,8 @@ if (dataPath is None or \
 print ("%s --dataPath %s --sqliteDbName %s --mysqlDbName %s --mysqlUserName %s --mysqlPassword %s --mysqlHost %s --siteName %s" % (sys.argv[0], dataPath, sqliteDbName, mysqlDbName, mysqlUserName, mysqlPassword, mysqlHost, siteName))
 print ("-----------------------------------------------------------------------------------------------------")
 
+starttime = datetime.utcnow()
+
 def ensure_dir(file_path):
     directory = os.path.dirname(file_path)
     if not os.path.exists(directory):
@@ -142,3 +144,7 @@ print ("source urls:           %s " % cntSourceUrls)
 print ("added urls:            %s " % cntAddedUrls)
 print ("source articles:       %s " % cntSourceArticles)
 print ("added articles:        %s " % cntAddedArticles)
+
+endtime = datetime.utcnow()
+
+print ("runtime:         %s" % str(endtime - starttime))
